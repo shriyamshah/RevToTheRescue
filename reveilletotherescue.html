@@ -1,0 +1,612 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reveille To The Rescue</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f8f4f4;
+  color: #421522;
+}
+
+header {
+  background: #500000;
+  color: white;
+  padding: 25px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 30px;
+}
+
+.brand p {
+  margin: 7px 0 0;
+  color: #e4c7cc;
+}
+
+.connection-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.connection {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #f0dfe2;
+  background: #681b2b;
+  padding: 9px 14px;
+  border: 1px solid #89515c;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9aa9bc;
+}
+
+.connect-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 11px 17px;
+  border: 1px solid #a86a76;
+  border-radius: 9px;
+  background: #7b1e32;
+  color: white;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .2s;
+}
+
+.connect-button:hover {
+  background: #8f293e;
+}
+
+.connect-button:active {
+  transform: scale(.98);
+}
+
+.connect-button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+#serialStatus {
+  margin: 0;
+  color: #e4c7cc;
+  font-size: 12px;
+  text-align: right;
+  max-width: 280px;
+}
+
+main {
+  max-width: 1450px;
+  margin: 28px auto;
+  padding: 0 28px;
+}
+
+.top-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #ead9dc;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px #5000000d;
+}
+
+h2 {
+  margin: 0 0 22px;
+  font-size: 21px;
+}
+
+.sensor-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.sensor {
+  border-radius: 12px;
+  padding: 20px 15px;
+  background: #f8eeee;
+  min-width: 0;
+}
+
+.sensor:nth-child(2) {
+  background: #f7f0f1;
+}
+
+.sensor:nth-child(3) {
+  background: #f2e8eb;
+}
+
+.sensor p {
+  margin: 0;
+  color: #77545c;
+  font-size: 14px;
+}
+
+.sensor strong {
+  display: block;
+  font-size: 30px;
+  margin: 15px 0 5px;
+  overflow-wrap: anywhere;
+  color: #500000;
+}
+
+.sensor small {
+  color: #77545c;
+}
+
+.alert {
+  background: #edf7f0;
+  color: #176b43;
+  border-radius: 12px;
+  padding: 22px;
+  line-height: 1.6;
+}
+
+.alert.warning {
+  background: #fff2df;
+  color: #8a5100;
+}
+
+.alert.error {
+  background: #fff0f0;
+  color: #a51f2b;
+}
+
+.control-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 30px;
+}
+
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(90px, 140px));
+  justify-content: center;
+  gap: 12px;
+}
+
+.pad button {
+  min-height: 80px;
+  border: 0;
+  border-radius: 12px;
+  background: #762238;
+  color: white;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .12s, filter .12s;
+}
+
+.pad button:hover {
+  filter: brightness(1.12);
+}
+
+.pad button:active {
+  transform: scale(.97);
+}
+
+.pad button:disabled {
+  opacity: .65;
+  cursor: not-allowed;
+}
+
+.pad .forward {
+  grid-column: 2;
+  background: #500000;
+}
+
+.pad .left {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+.pad .stop {
+  grid-column: 2;
+  grid-row: 2;
+  background: #a32638;
+}
+
+.pad .right {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.pad .backward {
+  grid-column: 2;
+  grid-row: 3;
+  background: #500000;
+}
+
+.details {
+  border-left: 1px solid #ead9dc;
+  padding-left: 28px;
+}
+
+.detail-box {
+  background: #f6edef;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.emergency {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  background: #fff5f5;
+  border: 1px solid #e8b8be;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.emergency h2 {
+  color: #a51f2b;
+  margin-bottom: 8px;
+}
+
+.emergency p {
+  color: #77545c;
+  line-height: 1.6;
+  margin: 5px 0;
+}
+
+#emergencyStop {
+  min-width: 240px;
+  min-height: 68px;
+  border: 0;
+  border-radius: 10px;
+  background: #a51f2b;
+  color: white;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+#emergencyStop:hover {
+  background: #871722;
+}
+
+footer {
+  text-align: center;
+  color: #8d7379;
+  padding: 10px 20px 28px;
+  font-size: 13px;
+}
+
+@media (max-width: 800px) {
+  header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .connection-area {
+    align-items: flex-start;
+  }
+
+  #serialStatus {
+    text-align: left;
+  }
+
+  .top-grid,
+  .control-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .details {
+    border-left: 0;
+    padding: 0;
+  }
+
+  .emergency {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #emergencyStop {
+    width: 100%;
+  }
+
+  main {
+    padding: 0 14px;
+  }
+}
+
+@media (max-width: 450px) {
+  .sensor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pad {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pad button {
+    min-height: 68px;
+    font-size: 13px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="brand">
+    <h1>◈ Reveille To The Rescue</h1>
+    <p>Monitor · Control · Explore</p>
+  </div>
+
+  <div class="connection-area">
+    <div id="connection" class="connection">
+      <span class="status-dot"></span>
+      <span id="connectionText">Disconnected</span>
+    </div>
+
+    <button id="connectArduino" class="connect-button">
+      <span>↔</span> Connect Arduino
+    </button>
+
+    <p id="serialStatus">Connect your Arduino via USB to begin.</p>
+  </div>
+</header>
+
+<main>
+  <div class="top-grid">
+
+    <section class="panel">
+      <h2>◉ Sensor Readings</h2>
+
+      <div class="sensor-grid">
+        <div class="sensor">
+          <p>Temperature</p>
+          <strong><span id="temperature">0</span>°</strong>
+          <small>Celsius</small>
+        </div>
+
+        <div class="sensor">
+          <p>Humidity</p>
+          <strong><span id="humidity">0</span>%</strong>
+          <small>Relative humidity</small>
+        </div>
+
+        <div class="sensor">
+          <p>Distance</p>
+          <strong><span id="distance">0</span></strong>
+          <small>Centimeters</small>
+        </div>
+      </div>
+
+      <p id="updated" style="color:#8d7379;font-size:13px;margin-bottom:0">
+        No sensor data received
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>⚠ Alert Status</h2>
+
+      <div id="alert" class="alert">
+        <strong>✓ No alerts reported</strong>
+        <div>Waiting for sensor data.</div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="panel">
+    <div class="control-layout">
+
+      <div>
+        <h2>✥ Movement Controls</h2>
+        <p style="color:#8d7379">
+          Movement commands are display-only until motor control is connected.
+        </p>
+
+        <div class="pad">
+          <button class="forward" data-command="FORWARD">▲<br>Forward</button>
+          <button class="left" data-command="LEFT">◀<br>Left</button>
+          <button class="stop" data-command="STOP">■<br>Stop</button>
+          <button class="right" data-command="RIGHT">▶<br>Right</button>
+          <button class="backward" data-command="BACKWARD">▼<br>Backward</button>
+        </div>
+      </div>
+
+      <div class="details">
+        <h2>System Status</h2>
+
+        <p>Current Command</p>
+        <div id="currentCommand" class="detail-box">STOP</div>
+
+        <p>Communication</p>
+        <div id="commandStatus" class="detail-box">
+          Motor control not connected
+        </div>
+
+        <p style="color:#8d7379;font-size:13px;line-height:1.6">
+          Sensor readings use the Arduino USB connection. Wireless movement
+          control requires a separate ESP32 or motor-control interface.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="emergency">
+    <div>
+      <h2>⬟ Emergency Stop</h2>
+      <p>Request an immediate stop if the rover is connected.</p>
+      <p>The ESP32 or motor controller must independently stop the motors
+      if communication is lost.</p>
+    </div>
+
+    <button id="emergencyStop">■ &nbsp; EMERGENCY STOP</button>
+  </section>
+</main>
+
+<footer>
+  Reveille To The Rescue · Dashboard · Waiting for live sensor data
+</footer>
+
+<script>
+let serialPort;
+let reader;
+
+const connectionText = document.getElementById("connectionText");
+const statusDot = document.querySelector(".status-dot");
+const serialStatus = document.getElementById("serialStatus");
+const connectButton = document.getElementById("connectArduino");
+
+function setConnectionStatus(connected, message) {
+  connectionText.textContent = connected ? "Arduino Connected" : "Disconnected";
+  statusDot.style.background = connected ? "#83edbd" : "#9aa9bc";
+  serialStatus.textContent = message;
+}
+
+function updateAlert(warning, message) {
+  const alertBox = document.getElementById("alert");
+
+  alertBox.className = warning ? "alert warning" : "alert";
+  alertBox.replaceChildren();
+
+  const heading = document.createElement("strong");
+  heading.textContent = warning ? "⚠ Warning" : "✓ No alerts reported";
+
+  const description = document.createElement("div");
+  description.textContent = message;
+
+  alertBox.append(heading, description);
+}
+
+function command(name) {
+  document.getElementById("currentCommand").textContent = name;
+  document.getElementById("commandStatus").textContent =
+    "Display only — motor control is not connected";
+}
+
+document.querySelectorAll("[data-command]").forEach(button => {
+  button.addEventListener("click", () => command(button.dataset.command));
+});
+
+document.getElementById("emergencyStop").addEventListener("click", () => {
+  command("STOP");
+
+  document.getElementById("commandStatus").textContent =
+    "Display only — physical emergency stop is not connected";
+
+  updateAlert(true, "Emergency stop requested from the dashboard. Motors have NOT been stopped by this button.");
+});
+
+connectButton.addEventListener("click", async () => {
+  if (!("serial" in navigator)) {
+    setConnectionStatus(
+      false,
+      "Web Serial unavailable. Use desktop Chrome on localhost or HTTPS."
+    );
+    return;
+  }
+
+  connectButton.disabled = true;
+
+  try {
+    serialPort = await navigator.serial.requestPort();
+    await serialPort.open({ baudRate: 115200 });
+
+    setConnectionStatus(true, "Connected. Waiting for sensor readings…");
+    connectButton.textContent = "Connected ✓";
+
+    const decoder = new TextDecoderStream();
+    const readableClosed = serialPort.readable.pipeTo(decoder.writable);
+    reader = decoder.readable.getReader();
+
+    let buffer = "";
+
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+
+      buffer += value;
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.trim()) continue;
+
+        try {
+          const data = JSON.parse(line.trim());
+
+          document.getElementById("temperature").textContent =
+            data.temperature ?? 0;
+
+          document.getElementById("humidity").textContent =
+            data.humidity ?? 0;
+
+          document.getElementById("distance").textContent =
+            data.distance == null ? 0 : data.distance;
+
+          document.getElementById("updated").textContent =
+            "Last updated · " + new Date().toLocaleTimeString();
+
+          if (data.emergencyPressed) {
+            updateAlert(true, "Emergency button pressed!");
+          } else if (data.alert && data.alert !== "Normal") {
+            updateAlert(true, data.alert);
+          } else {
+            updateAlert(false, "No active sensor alerts.");
+          }
+
+        } catch (error) {
+          console.log("Skipping invalid sensor data:", line);
+        }
+      }
+    }
+
+    await readableClosed;
+
+  } catch (error) {
+    setConnectionStatus(false, "Connection failed: " + error.message);
+    console.error(error);
+  } finally {
+    connectButton.disabled = false;
+    connectButton.innerHTML = "<span>↔</span> Connect Arduino";
+  }
+});
+</script>
+
+</body>
+</html>
