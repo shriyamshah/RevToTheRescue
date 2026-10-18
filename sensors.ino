@@ -1,6 +1,10 @@
 
 #include <DHT.h>
 
+// Mirror sensor output to USB Serial Monitor and to the ESP32 over Serial1.
+#define BOTH_PRINT(...) do { Serial.print(__VA_ARGS__); Serial1.print(__VA_ARGS__); } while (0)
+#define BOTH_PRINTLN(...) do { Serial.println(__VA_ARGS__); Serial1.println(__VA_ARGS__); } while (0)
+
 // EchoPaw - Dashboard Sensor Data
 
 const int DHT_PIN = A0;
@@ -92,24 +96,24 @@ void loop() {
       buttonPressed;
 
     // Output one JSON object per line
-    Serial1.print("{\"temperature\":");
-    if (dhtValid) Serial1.print(temperature, 1);
-    else Serial1.print("null");
+    BOTH_PRINT("{\"temperature\":");
+    if (dhtValid) BOTH_PRINT(temperature, 1);
+    else BOTH_PRINT("null");
 
-    Serial1.print(",\"humidity\":");
-    if (dhtValid) Serial1.print(humidity, 1);
-    else Serial1.print("null");
+    BOTH_PRINT(",\"humidity\":");
+    if (dhtValid) BOTH_PRINT(humidity, 1);
+    else BOTH_PRINT("null");
 
-    Serial1.print(",\"distance\":");
-    if (distanceValid) Serial1.print(distanceCm, 1);
-    else Serial1.print("null");
+    BOTH_PRINT(",\"distance\":");
+    if (distanceValid) BOTH_PRINT(distanceCm, 1);
+    else BOTH_PRINT("null");
 
-    Serial1.print(",\"emergencyPressed\":");
-    Serial1.print(buttonPressed ? "true" : "false");
+    BOTH_PRINT(",\"emergencyPressed\":");
+    BOTH_PRINT(buttonPressed ? "true" : "false");
 
-    Serial1.print(",\"alert\":");
-    Serial1.print(alert ? "true" : "false");
+    BOTH_PRINT(",\"alert\":");
+    BOTH_PRINT(alert ? "true" : "false");
 
-    Serial1.println("}");
+    BOTH_PRINTLN("}");
   }
 }
